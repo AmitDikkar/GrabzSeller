@@ -7,16 +7,16 @@
     android:background="@drawable/grabz_background"
     android:orientation="vertical"
     tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
-
+ 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
         android:layout_margin="20dp"
-        android:text="Scan"
-        android:textColor="#000000"
-        android:textSize="30dp" />
+        android:text="Select Aisle and start scanning items."
+        android:textColor="#FFFFFF"
+        android:textSize="15dp" />
 
     <Spinner
         android:id="@+id/spinner_aisleNames"

@@ -4,5 +4,8 @@
     <string name="app_name">AndroidQrCodeExample</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_seller_login">SellerLoginActivity</string>
+    <string name="hint_enter_outlet_id">Enter Outlet Id...</string>
 
 </resources>
