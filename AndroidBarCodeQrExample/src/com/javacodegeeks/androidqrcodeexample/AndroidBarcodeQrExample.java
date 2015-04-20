@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -125,9 +126,6 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				//post this item to backend.
 				PostScannedItemTask task = new PostScannedItemTask(this);
 				task.execute(outletId, selectedAisle, upcCode);
-				
-				//Toast toast = Toast.makeText(this, "Successfully Posted. Content:" + upcCode + " Format:" + format, Toast.LENGTH_LONG);
-				//toast.show();
 			}
 		}
 	}
@@ -139,8 +137,14 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
         String selectedAisleItem = parent.getItemAtPosition(position).toString();
         Toast tost = Toast.makeText(getApplicationContext(), "You have selected" + selectedAisleItem, Toast.LENGTH_SHORT);
         tost.show();
+        displayAisleItems(selectedAisleItem);
     }
 	
+	private void displayAisleItems(String selectedAisleItem) {
+		GetItemsTask task = new GetItemsTask(this);
+		task.execute(this.outletId);
+	}
+
 	/**
 	 * To send POST request to add scanned item in database.
 	 * @author Amit
@@ -258,6 +262,61 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		// TODO Auto-generated method stub
 		
 	}
-
 	
+	public class GetItemsTask extends AsyncTask<String, Void, AisleItemDto[]>{
+
+		Context appContext;
+		
+		private HttpStatus responseCode;
+		
+		public GetItemsTask(Context appContext){
+			this.appContext = appContext;
+		}
+		
+		@Override
+		protected AisleItemDto[] doInBackground(String... params) {
+			String outletId = params[0];
+			String url = "http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+outletId+"/aisles/Aisle:11/items";
+			try{
+				// Set the Accept header
+				HttpHeaders requestHeaders = new HttpHeaders();
+				requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
+				HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
+				RestTemplate restTemplate = new RestTemplate();
+				MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
+				restTemplate.getMessageConverters().add(mapper);
+				//       BasketDto[] baskets = restTemplate.getForObject(url, BasketDto[].class);
+				ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,AisleItemDto[].class);
+				AisleItemDto[] aisleNames = responseEntity.getBody();
+
+				this.responseCode = responseEntity.getStatusCode();
+				Log.d("GET Task on", url+" " + responseCode.toString());
+				return aisleNames;
+			}
+			catch (Exception e){
+				return null;
+			}
+		}
+		
+		@Override
+		protected void onPostExecute(AisleItemDto[] aisleItemDtos) {
+			//display AisleItemDtos on the list view.
+			if(aisleItemDtos == null){
+				Toast toast = Toast.makeText(appContext, "Error Rtrieving Aisle's items", Toast.LENGTH_SHORT);
+				toast.show();
+			}
+			else{
+				Toast toast = Toast.makeText(appContext, "Received " + aisleItemDtos.length + " items", Toast.LENGTH_SHORT);
+				toast.show();
+				AisleItemsAdapter adapter = new AisleItemsAdapter(appContext,
+		                R.layout.listview_item_row, aisleItemDtos);
+		       
+		        ListView listView1 = (ListView)findViewById(R.id.idListViewAisleItems);
+		        
+		        View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
+		        listView1.addHeaderView(header);
+		        listView1.setAdapter(adapter);
+			}
+		}
+	}
 }
