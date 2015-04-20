@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	/** Called when the activity is first created. */
 
 	static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
+	String outletId;
+	private static final String PREFS_NAME = "MyPrefsFile";
 
 	Spinner spinner;
 	
@@ -46,13 +49,23 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		
 		setContentView(R.layout.activity_main);
 		this.spinner = (Spinner) findViewById(R.id.spinner_aisleNames);
+		
+		//retrieve outletId from the shared preferences.
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		this.outletId = settings.getString("outletId", null);
+		Toast toast = Toast.makeText(this, "Main Activity shared preference value: " + outletId, Toast.LENGTH_SHORT);
+		toast.show();
+		
 		populateSpinner();
 		this.spinner.setOnItemSelectedListener(this);
 	}
 
 	private void populateSpinner() {
 		GetAisleItemsTask task = new GetAisleItemsTask(this);
-		task.execute("http://grabztestenv.elasticbeanstalk.com//seller/outlets/b97153fc14/aisles/");
+		//task.execute("http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+this.outletId+"/aisles/");
+		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/", this.outletId);
+		task.execute(url);
+			
 	}
 
 	public void scanBar(View v) {
@@ -107,7 +120,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				
 				String selectedAisle = String.valueOf(this.spinner.getSelectedItem());
-				String outletId = "b97153fc14";
+				String outletId = this.outletId;
 				
 				//post this item to backend.
 				PostScannedItemTask task = new PostScannedItemTask(this);
@@ -148,7 +161,6 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 			String selectedAisle = params[1];
 			String upcCode = params[2];
 			String url = "http://grabztestenv.elasticbeanstalk.com//seller/outlets/"+outletId+"/aisles/"+ selectedAisle+"/items/"+upcCode;
-			
 			Log.i("PostScannedItemTask - doInBackground", "url received: " + url);
 			AisleItem aisleItem = sendPostRequest(url);
 			return aisleItem;
@@ -214,6 +226,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 			//       BasketDto[] baskets = restTemplate.getForObject(url, BasketDto[].class);
 			ResponseEntity<String[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,String[].class);
 			String[] aisleNames = responseEntity.getBody();
+
 			this.responseCode = responseEntity.getStatusCode();
 			Log.d("GET Task on", url+" " + responseCode.toString());
 			return aisleNames;
@@ -221,6 +234,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 
 		 @Override
 	     protected void onPostExecute(String[] aisleItems) {
+				Toast toastNew = Toast.makeText(appContext, "Received " + aisleItems.length + " Items", Toast.LENGTH_LONG);
+				toastNew.show();
 	         if (aisleItems.length != 0 && this.responseCode == HttpStatus.OK) {
 	             populateSpinner(aisleItems);
 	         }

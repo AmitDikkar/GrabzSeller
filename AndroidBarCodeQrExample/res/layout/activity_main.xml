@@ -7,7 +7,7 @@
     android:background="@drawable/grabz_background"
     android:orientation="vertical"
     tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
- 
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -21,13 +21,41 @@
     <Spinner
         android:id="@+id/spinner_aisleNames"
         android:layout_width="wrap_content"
-        android:layout_height="50dp" 
-        android:background="#90150517"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:background="#90150517"
+        android:gravity="center" />
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/scanner"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="scanQR"
+            android:text="QR Code"
+            android:textSize="18dp" >
+        </Button>
+
+        <Button
+            android:id="@+id/scanner2"
+            android:layout_height="70dp"
+            android:layout_width="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="scanBar"
+            android:text="Bar Code"
+            android:textSize="18dp" >
+        </Button>
+    </LinearLayout>
+    <!--
+         <Button
         android:id="@+id/scanner"
         android:layout_width="250dp"
         android:layout_height="80dp"
@@ -50,5 +78,6 @@
         android:text="Bar Code"
         android:textSize="18dp" >
     </Button>
+    -->
 
 </LinearLayout>
