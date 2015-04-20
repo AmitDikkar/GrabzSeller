@@ -109,8 +109,6 @@ public class SellerLoginActivity extends Activity {
 
 				SharedPreferences settingsNew = getSharedPreferences(PREFS_NAME, 0);
 				String silent = settingsNew.getString("outletId", "");
-				Toast toast = Toast.makeText(this.appContext, "Shared Preference stored as : " + silent, Toast.LENGTH_LONG);
-				toast.show();
 				startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
 			}
 		}

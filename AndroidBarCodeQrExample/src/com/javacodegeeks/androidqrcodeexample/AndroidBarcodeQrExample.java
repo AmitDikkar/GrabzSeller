@@ -44,6 +44,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 
 	Spinner spinner;
 	
+	ListView listViewAisleItems;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,11 +56,15 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		//retrieve outletId from the shared preferences.
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		this.outletId = settings.getString("outletId", null);
-		Toast toast = Toast.makeText(this, "Main Activity shared preference value: " + outletId, Toast.LENGTH_SHORT);
-		toast.show();
 		
+		//populate aisle names for this outlet.
 		populateSpinner();
 		this.spinner.setOnItemSelectedListener(this);
+		
+		//Create the list view to display items of the aisle.
+		this.listViewAisleItems = (ListView)findViewById(R.id.idListViewAisleItems);
+		View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
+        this.listViewAisleItems.addHeaderView(header);
 	}
 
 	private void populateSpinner() {
@@ -135,14 +141,12 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
     public void onItemSelected(AdapterView<?> parent, View v, int position,
             long id) {
         String selectedAisleItem = parent.getItemAtPosition(position).toString();
-        Toast tost = Toast.makeText(getApplicationContext(), "You have selected" + selectedAisleItem, Toast.LENGTH_SHORT);
-        tost.show();
         displayAisleItems(selectedAisleItem);
     }
 	
 	private void displayAisleItems(String selectedAisleItem) {
-		GetItemsTask task = new GetItemsTask(this);
-		task.execute(this.outletId);
+		GetItemsTask task = new GetItemsTask(this, this.listViewAisleItems);
+		task.execute(this.outletId, selectedAisleItem);
 	}
 
 	/**
@@ -178,7 +182,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				return;
 			}
 			else{
-				Toast toast = Toast.makeText(this.appContext, "Item" + aisleItem.getName() + " has been added", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(this.appContext, "Item \"" + aisleItem.getName() + "\" has been added.", Toast.LENGTH_LONG);
 				toast.show();
 			}
 	     }
@@ -238,8 +242,6 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 
 		 @Override
 	     protected void onPostExecute(String[] aisleItems) {
-				Toast toastNew = Toast.makeText(appContext, "Received " + aisleItems.length + " Items", Toast.LENGTH_LONG);
-				toastNew.show();
 	         if (aisleItems.length != 0 && this.responseCode == HttpStatus.OK) {
 	             populateSpinner(aisleItems);
 	         }
@@ -268,15 +270,18 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		Context appContext;
 		
 		private HttpStatus responseCode;
+		ListView listViewAisleItems;
 		
-		public GetItemsTask(Context appContext){
+		public GetItemsTask(Context appContext, ListView listViewAisleItems){
 			this.appContext = appContext;
+			this.listViewAisleItems = listViewAisleItems;
 		}
 		
 		@Override
 		protected AisleItemDto[] doInBackground(String... params) {
 			String outletId = params[0];
-			String url = "http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+outletId+"/aisles/Aisle:11/items";
+			String aisleNumber = params[1];
+			String url = "http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+outletId+"/aisles/" + aisleNumber +"/items";
 			try{
 				// Set the Accept header
 				HttpHeaders requestHeaders = new HttpHeaders();
@@ -285,10 +290,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				RestTemplate restTemplate = new RestTemplate();
 				MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
 				restTemplate.getMessageConverters().add(mapper);
-				//       BasketDto[] baskets = restTemplate.getForObject(url, BasketDto[].class);
 				ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,AisleItemDto[].class);
 				AisleItemDto[] aisleNames = responseEntity.getBody();
-
 				this.responseCode = responseEntity.getStatusCode();
 				Log.d("GET Task on", url+" " + responseCode.toString());
 				return aisleNames;
@@ -306,16 +309,12 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				toast.show();
 			}
 			else{
-				Toast toast = Toast.makeText(appContext, "Received " + aisleItemDtos.length + " items", Toast.LENGTH_SHORT);
-				toast.show();
+				this.listViewAisleItems.setAdapter(null);				
 				AisleItemsAdapter adapter = new AisleItemsAdapter(appContext,
 		                R.layout.listview_item_row, aisleItemDtos);
-		       
-		        ListView listView1 = (ListView)findViewById(R.id.idListViewAisleItems);
+		        this.listViewAisleItems.setAdapter(adapter);
 		        
-		        View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
-		        listView1.addHeaderView(header);
-		        listView1.setAdapter(adapter);
+		        Log.i("CUSTOM_LIST_VIEW", "Items after populating: " + this.listViewAisleItems.getAdapter().getCount());
 			}
 		}
 	}
