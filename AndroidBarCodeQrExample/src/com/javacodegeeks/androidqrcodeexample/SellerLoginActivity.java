@@ -37,8 +37,21 @@ public class SellerLoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_seller_login);
-		this.editTextOutletId = (EditText) findViewById(R.id.idEditTextOutletId);
+		
+		//check whether user has logged in or not.
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		String outletId = settings.getString("outletId", null);
+		if(outletId != null){
+			//if logged in, directly start main activity.
+			startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+			finish();
+		}
+		else{
+			//if not logged in, make user login.
+			Toast.makeText(this, "outlet id is null, need to login", Toast.LENGTH_SHORT).show();
+			setContentView(R.layout.activity_seller_login);
+			this.editTextOutletId = (EditText) findViewById(R.id.idEditTextOutletId);
+		}
 	}
 	
 	//on click listener for authenticate button.
@@ -100,16 +113,18 @@ public class SellerLoginActivity extends Activity {
 				toast.show();
 			}
 			else {
+				//put outlet id in the shared preference - to use it in next activity.
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 				SharedPreferences.Editor editor = settings.edit();
 				editor.putString("outletId", response.getOutletId());
-
-				// Commit the edits!
 				editor.commit();
-
-				SharedPreferences settingsNew = getSharedPreferences(PREFS_NAME, 0);
-				String silent = settingsNew.getString("outletId", "");
+				
+				//start our next activity
 				startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+				
+				//kill login activity, so that user will not be able to go back to this activity 
+				//by pressing back button
+				finish();
 			}
 		}
 	}

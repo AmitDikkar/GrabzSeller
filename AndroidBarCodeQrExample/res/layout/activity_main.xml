@@ -7,16 +7,31 @@
     android:background="@drawable/grabz_background"
     android:orientation="vertical"
     tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|top"
-        android:layout_margin="20dp"
-        android:text="Select Aisle and start scanning items."
-        android:textColor="#FFFFFF"
-        android:textSize="15dp" />
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:layout_margin="5dp"
+            android:text="Select Aisle and start scanning items."
+            android:textColor="#FFFFFF"
+            android:textSize="15dp" 
+            android:layout_weight="1"/>
+        <ImageButton
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="12"
+            android:onClick="logout"
+            android:contentDescription="logout User"
+            android:src="@drawable/ic_action_1429593462_logout" />
+        
+    </LinearLayout>
 
     <Spinner
         android:id="@+id/spinner_aisleNames"

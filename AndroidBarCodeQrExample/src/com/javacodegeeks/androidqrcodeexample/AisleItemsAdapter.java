@@ -3,6 +3,9 @@
  */
 package com.javacodegeeks.androidqrcodeexample;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleItemDeleteClickListener;
@@ -29,13 +32,17 @@ public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
 
 	Context context;
 	int layoutResourceId;   
-	AisleItemDto data[] = null;
-	
+	//AisleItemDto data[] = null;
+	List<AisleItemDto> data = new ArrayList<AisleItemDto>();
 	public AisleItemsAdapter(Context context, int layoutResourceId, AisleItemDto[] data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
-		this.data = data;
+		
+		//conver array to the list.. makes thisngs more easy.
+		for(AisleItemDto aisleItemDto : data){
+			this.data.add(aisleItemDto);
+		}
 	}
 
 	static class AisleItemHolder{
@@ -62,7 +69,7 @@ public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
             holder = (AisleItemHolder)row.getTag();
         }
        
-        AisleItemDto aisleItemDto = data[position];
+        AisleItemDto aisleItemDto = data.get(position);
         holder.txtTitle.setText(aisleItemDto.getAisleItem().getName());
         //holder.imgIcon.setImageResource(weather.icon);
         
@@ -86,7 +93,9 @@ public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
 		Log.i("Refresh List view", "Removing item at " + position);
 		//data[position] = new AisleItemDto();
 		//data = ArrayUtils.removeElement(data, position);
-		this.notifyDataSetChanged();
+		//data.remove(position);
+		//this.notifyDataSetChanged();
+		Log.i("Refresh List view", "Refreshing the list");
 	}
 	
 	@Override

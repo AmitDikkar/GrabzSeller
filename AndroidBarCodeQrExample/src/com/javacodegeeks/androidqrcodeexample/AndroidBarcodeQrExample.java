@@ -15,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import com.javacodegeeks.pojo.AisleItem;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.ItemDto;
+import com.javacodegeeks.rest.RestManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -69,12 +70,12 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 
 	private void populateSpinner() {
 		GetAisleItemsTask task = new GetAisleItemsTask(this);
-		//task.execute("http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+this.outletId+"/aisles/");
 		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/", this.outletId);
 		task.execute(url);
 			
 	}
 
+	//onClick listner for scan barcode.
 	public void scanBar(View v) {
 		try {
 			Intent intent = new Intent(ACTION_SCAN);
@@ -85,6 +86,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		}
 	}
 
+	//on click listener for QR code scanning.
 	public void scanQR(View v) {
 		try {
 			Intent intent = new Intent(ACTION_SCAN);
@@ -93,6 +95,16 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		} catch (ActivityNotFoundException anfe) {
 			showDialog(AndroidBarcodeQrExample.this, "No Scanner Found", "Download a scanner code activity?", "Yes", "No").show();
 		}
+	}
+	
+	//on click listener for logout.
+	public void logout(View v){
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("outletId", null);
+		// Commit the edits!
+		editor.commit();
+		finish();
 	}
 
 	private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
@@ -224,14 +236,16 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		@Override
 		protected String[] doInBackground(String... params) {
 			String url = params[0];
-			// Set the Accept header
+			/*// Set the Accept header
 			HttpHeaders requestHeaders = new HttpHeaders();
 			requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
 			HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
 			RestTemplate restTemplate = new RestTemplate();
 			MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
-			restTemplate.getMessageConverters().add(mapper);
-			//       BasketDto[] baskets = restTemplate.getForObject(url, BasketDto[].class);
+			restTemplate.getMessageConverters().add(mapper);*/
+			RestManager manager = new RestManager();
+			HttpEntity<?> requestEntity = manager.getRequestEntity();
+			RestTemplate restTemplate = manager.getRestTemplate();
 			ResponseEntity<String[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,String[].class);
 			String[] aisleNames = responseEntity.getBody();
 
@@ -290,6 +304,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				RestTemplate restTemplate = new RestTemplate();
 				MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
 				restTemplate.getMessageConverters().add(mapper);
+				
+				//TODO: find a way to receive List in the response.
 				ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,AisleItemDto[].class);
 				AisleItemDto[] aisleNames = responseEntity.getBody();
 				this.responseCode = responseEntity.getStatusCode();
