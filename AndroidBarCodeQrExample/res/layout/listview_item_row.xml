@@ -13,15 +13,15 @@
         android:layout_marginTop="5dp"
         android:gravity="center_vertical"
         android:textColor="#FFFFFF"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:layout_weight="1"/>
     
     <ImageButton 
         android:id="@+id/btnDeleteAisleItem"
-        android:src="@drawable/ic_menu_delete"
+        android:src="@drawable/blue_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="5"
         android:contentDescription="Deletes the aisle item"
         />
     

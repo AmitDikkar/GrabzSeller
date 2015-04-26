@@ -42,6 +42,15 @@ public class AisleItem{
 	 */
 	private String imageUrl;
 	
+	private boolean onPromotion = false;
+	
+	private float promotionalPrice = 0;
+	
+	private String promotionName = "NO_NAME"; 
+	
+	public AisleItem() {
+	}
+
 	/**
 	 * @return the itemId
 	 */
@@ -97,5 +106,47 @@ public class AisleItem{
 	 */
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	/**
+	 * @return the onPromotion
+	 */
+	public boolean getOnPromotion() {
+		return onPromotion;
+	}
+
+	/**
+	 * @param onPromotion the onPromotion to set
+	 */
+	public void setOnPromotion(boolean onPromotion) {
+		this.onPromotion = onPromotion;
+	}
+
+	/**
+	 * @return the promotionalPrice
+	 */
+	public float getPromotionalPrice() {
+		return promotionalPrice;
+	}
+
+	/**
+	 * @param promotionalPrice the promotionalPrice to set
+	 */
+	public void setPromotionalPrice(float promotionalPrice) {
+		this.promotionalPrice = promotionalPrice;
+	}
+
+	/**
+	 * @return the promotionName
+	 */
+	public String getPromotionName() {
+		return promotionName;
+	}
+
+	/**
+	 * @param promotionName the promotionName to set
+	 */
+	public void setPromotionName(String promotionName) {
+		this.promotionName = promotionName;
 	}
 }
