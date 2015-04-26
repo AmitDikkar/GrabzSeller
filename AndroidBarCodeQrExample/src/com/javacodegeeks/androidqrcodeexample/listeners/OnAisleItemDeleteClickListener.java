@@ -14,6 +14,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.web.client.RestTemplate;
 
 import com.javacodegeeks.androidqrcodeexample.AisleItemsAdapter;
+import com.javacodegeeks.androidqrcodeexample.AndroidBarcodeQrExample;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.DeleteAisleItemResponse;
 import com.javacodegeeks.rest.RestManager;
@@ -42,24 +43,15 @@ public class OnAisleItemDeleteClickListener implements OnClickListener{
           this.adapter = aisleItemsAdapter;
           this.position = position;
      }
+    
 	@Override
 	public void onClick(View v) {
 		Log.i("DELETE_Aisle_item", "Gogin to delete an item.");
-		new DeleteAisleItemTask(context, adapter, position).execute(url);
+		new DeleteAisleItemTask().execute(url);
 	}
 	
 	
 public class DeleteAisleItemTask extends AsyncTask<String, Void, DeleteAisleItemResponse>{
-	
-	Context context;
-	private AisleItemsAdapter adapter;
-	private int position;
-	
-	public DeleteAisleItemTask(Context context, AisleItemsAdapter adapter, int position){
-		this.context = context;
-		this.adapter = adapter;
-		this.position = position;
-	}
 	
 	@Override
 	protected DeleteAisleItemResponse doInBackground(String... params) {
@@ -83,10 +75,11 @@ public class DeleteAisleItemTask extends AsyncTask<String, Void, DeleteAisleItem
 	protected void onPostExecute(DeleteAisleItemResponse result) {
 		super.onPostExecute(result);
 		if(result != null){
-			Toast.makeText(context, "Item deleted" + result.getMessage(), Toast.LENGTH_LONG).show();;
+			Toast.makeText(context, result.getMessage(), Toast.LENGTH_SHORT).show();;
 			
 			//since our operation is succesful we will remove it from the list.
-			this.adapter.removeItem(position);
+			AndroidBarcodeQrExample.aisleItemDtos.remove(position);
+			adapter.notifyDataSetChanged();
 		}
 		else{
 			Toast.makeText(context, "Sorry, Item can not be deleted at this time.", Toast.LENGTH_LONG).show();;

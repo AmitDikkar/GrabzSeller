@@ -3,7 +3,6 @@
  */
 package com.javacodegeeks.pojo;
 
-import com.javacodegeeks.pojo.AisleItem;;
 
 /**
  * @author Sina Nikkhah, Amit Dikkar, Shaji Thiyarathodi, Priyanka Deo

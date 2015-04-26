@@ -14,6 +14,7 @@ import com.javacodegeeks.pojo.LinkDto;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,18 +32,12 @@ import android.widget.Toast;
 public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
 
 	Context context;
-	int layoutResourceId;   
-	//AisleItemDto data[] = null;
-	List<AisleItemDto> data = new ArrayList<AisleItemDto>();
-	public AisleItemsAdapter(Context context, int layoutResourceId, AisleItemDto[] data) {
+	int layoutResourceId;
+	
+	public AisleItemsAdapter(Context context, int layoutResourceId, List<AisleItemDto> data) {
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
-		
-		//conver array to the list.. makes thisngs more easy.
-		for(AisleItemDto aisleItemDto : data){
-			this.data.add(aisleItemDto);
-		}
 	}
 
 	static class AisleItemHolder{
@@ -69,7 +64,8 @@ public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
             holder = (AisleItemHolder)row.getTag();
         }
        
-        AisleItemDto aisleItemDto = data.get(position);
+        Log.i("Adapter-GET-View", "Size is: " + AndroidBarcodeQrExample.aisleItemDtos.size());
+        AisleItemDto aisleItemDto = AndroidBarcodeQrExample.aisleItemDtos.get(position);
         holder.txtTitle.setText(aisleItemDto.getAisleItem().getName());
         //holder.imgIcon.setImageResource(weather.icon);
         
@@ -85,22 +81,12 @@ public class AisleItemsAdapter extends ArrayAdapter<AisleItemDto> {
         		getUrl = "http://grabztestenv.elasticbeanstalk.com" + link.getHref();
         	}
         }
-        deleteButton.setOnClickListener(new OnAisleItemDeleteClickListener(deleteUrl+"?action=delete", context, this, position));
+        deleteButton.setOnClickListener(new OnAisleItemDeleteClickListener(deleteUrl, context, this, position));
         return row;
 	}
 	
 	public void removeItem(int position){
 		Log.i("Refresh List view", "Removing item at " + position);
-		//data[position] = new AisleItemDto();
-		//data = ArrayUtils.removeElement(data, position);
-		//data.remove(position);
-		//this.notifyDataSetChanged();
 		Log.i("Refresh List view", "Refreshing the list");
-	}
-	
-	@Override
-	public void clear() {
-		super.clear();
-		data = null;
 	}
 }

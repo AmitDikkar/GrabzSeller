@@ -1,6 +1,8 @@
 package com.javacodegeeks.androidqrcodeexample;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +48,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	Spinner spinner;
 	
 	ListView listViewAisleItems;
+	public static List<AisleItemDto> aisleItemDtos = new ArrayList<AisleItemDto>();
+	AisleItemsAdapter aisleItemsAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		
 		setContentView(R.layout.activity_main);
 		this.spinner = (Spinner) findViewById(R.id.spinner_aisleNames);
+		this.spinner.setOnItemSelectedListener(this);
 		
 		//retrieve outletId from the shared preferences.
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -60,19 +65,21 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		
 		//populate aisle names for this outlet.
 		populateSpinner();
-		this.spinner.setOnItemSelectedListener(this);
 		
 		//Create the list view to display items of the aisle.
 		this.listViewAisleItems = (ListView)findViewById(R.id.idListViewAisleItems);
 		View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
         this.listViewAisleItems.addHeaderView(header);
+        				
+        //setting List view adapter for Aisle items list.
+		this.aisleItemsAdapter = new AisleItemsAdapter(this, R.layout.listview_item_row, aisleItemDtos);
+        this.listViewAisleItems.setAdapter(aisleItemsAdapter);
 	}
 
 	private void populateSpinner() {
 		GetAisleItemsTask task = new GetAisleItemsTask(this);
 		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/", this.outletId);
 		task.execute(url);
-			
 	}
 
 	//onClick listner for scan barcode.
@@ -166,7 +173,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	 * @author Amit
 	 *
 	 */
-	public class PostScannedItemTask extends AsyncTask<String, Void, AisleItem>{
+	public class PostScannedItemTask extends AsyncTask<String, Void, AisleItemDto>{
 
 		HttpStatus responseCode;
 		Context appContext;
@@ -176,43 +183,43 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		}
 
 		@Override
-		protected AisleItem doInBackground(String... params) {
+		protected AisleItemDto doInBackground(String... params) {
 			String outletId = params[0];
 			String selectedAisle = params[1];
 			String upcCode = params[2];
 			String url = "http://grabztestenv.elasticbeanstalk.com//seller/outlets/"+outletId+"/aisles/"+ selectedAisle+"/items/"+upcCode;
 			Log.i("PostScannedItemTask - doInBackground", "url received: " + url);
-			AisleItem aisleItem = sendPostRequest(url);
-			return aisleItem;
+			AisleItemDto aisleItemDto = sendPostRequest(url);
+			return aisleItemDto;
 		}
 
 		@Override
-		protected void onPostExecute(AisleItem aisleItem) {
-			if(aisleItem == null){
+		protected void onPostExecute(AisleItemDto aisleItemDto) {
+			if(aisleItemDto == null){
 				Toast toast = Toast.makeText(this.appContext, "Sorry, we couldn't find this item in our database. Please contact Team Grabz.", Toast.LENGTH_LONG);
 				toast.show();
 				return;
 			}
 			else{
-				Toast toast = Toast.makeText(this.appContext, "Item \"" + aisleItem.getName() + "\" has been added.", Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(this.appContext, "Item \"" + aisleItemDto.getAisleItem().getName() + "\" has been added.", Toast.LENGTH_LONG);
 				toast.show();
+				aisleItemDtos.add(aisleItemDto);
+				aisleItemsAdapter.notifyDataSetChanged();
 			}
 	     }
 		
-		private AisleItem sendPostRequest(String url) {
+		private AisleItemDto sendPostRequest(String url) {
 			try{
-				HttpHeaders requestHeaders = new HttpHeaders();
-				requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
-				HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
-				RestTemplate restTemplate = new RestTemplate();
-				MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
-				restTemplate.getMessageConverters().add(mapper);
+				RestManager manager = new RestManager();
+				HttpEntity<?> requestEntity = manager.getRequestEntity();
+				RestTemplate restTemplate = manager.getRestTemplate();
+				
 				ResponseEntity<AisleItemDto> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AisleItemDto.class);
 				Log.i("Status Code", "Status code" + responseEntity.getStatusCode());
 				AisleItemDto aisleItemDto = responseEntity.getBody();
 				responseCode = responseEntity.getStatusCode();
 				Log.i("PostScannedItemTask - sendPostRequest", "Request Executed with status code : " + responseCode + " and item received is:" + aisleItemDto.getAisleItem().getName());
-				return aisleItemDto.getAisleItem();
+				return aisleItemDto;
 			}
 			catch(Exception e){
 				return null;
@@ -236,13 +243,6 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		@Override
 		protected String[] doInBackground(String... params) {
 			String url = params[0];
-			/*// Set the Accept header
-			HttpHeaders requestHeaders = new HttpHeaders();
-			requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
-			HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
-			RestTemplate restTemplate = new RestTemplate();
-			MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
-			restTemplate.getMessageConverters().add(mapper);*/
 			RestManager manager = new RestManager();
 			HttpEntity<?> requestEntity = manager.getRequestEntity();
 			RestTemplate restTemplate = manager.getRestTemplate();
@@ -297,20 +297,16 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 			String aisleNumber = params[1];
 			String url = "http://grabztestenv.elasticbeanstalk.com/seller/outlets/"+outletId+"/aisles/" + aisleNumber +"/items";
 			try{
-				// Set the Accept header
-				HttpHeaders requestHeaders = new HttpHeaders();
-				requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
-				HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
-				RestTemplate restTemplate = new RestTemplate();
-				MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
-				restTemplate.getMessageConverters().add(mapper);
+				RestManager manager = new RestManager();
+				HttpEntity<?> requestEntity = manager.getRequestEntity();
+				RestTemplate restTemplate = manager.getRestTemplate();
 				
 				//TODO: find a way to receive List in the response.
-				ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,AisleItemDto[].class);
-				AisleItemDto[] aisleNames = responseEntity.getBody();
+				ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, AisleItemDto[].class);
+				AisleItemDto[] aisleItems = responseEntity.getBody();
 				this.responseCode = responseEntity.getStatusCode();
 				Log.d("GET Task on", url+" " + responseCode.toString());
-				return aisleNames;
+				return aisleItems;
 			}
 			catch (Exception e){
 				return null;
@@ -325,11 +321,10 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 				toast.show();
 			}
 			else{
-				this.listViewAisleItems.setAdapter(null);				
-				AisleItemsAdapter adapter = new AisleItemsAdapter(appContext,
-		                R.layout.listview_item_row, aisleItemDtos);
-		        this.listViewAisleItems.setAdapter(adapter);
-		        
+				Log.i("GET-items-task", "Got aisle Items: " + aisleItemDtos.length);
+				aisleItemsAdapter.clear();
+				aisleItemsAdapter.addAll(aisleItemDtos);
+				aisleItemsAdapter.notifyDataSetChanged();
 		        Log.i("CUSTOM_LIST_VIEW", "Items after populating: " + this.listViewAisleItems.getAdapter().getCount());
 			}
 		}

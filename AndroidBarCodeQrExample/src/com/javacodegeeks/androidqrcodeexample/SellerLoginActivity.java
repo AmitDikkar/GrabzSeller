@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
@@ -48,7 +49,6 @@ public class SellerLoginActivity extends Activity {
 		}
 		else{
 			//if not logged in, make user login.
-			Toast.makeText(this, "outlet id is null, need to login", Toast.LENGTH_SHORT).show();
 			setContentView(R.layout.activity_seller_login);
 			this.editTextOutletId = (EditText) findViewById(R.id.idEditTextOutletId);
 		}
@@ -56,7 +56,11 @@ public class SellerLoginActivity extends Activity {
 	
 	//on click listener for authenticate button.
 	public void authenticateSeller(View v){
+		
 		String outletIdText = this.editTextOutletId.getText().toString();
+		Log.d("LoginActivity", "Outlet id before trimming: " + outletIdText + "<<");
+		outletIdText = outletIdText.trim();
+		Log.d("LoginActivity", "Outlet id after trimming: " + outletIdText +"<<");
 		if(outletIdText == null || outletIdText.equals("")){
 			Toast tost = Toast.makeText(getApplicationContext(), "Please enter outlet Id.", Toast.LENGTH_SHORT);
 			tost.show();
