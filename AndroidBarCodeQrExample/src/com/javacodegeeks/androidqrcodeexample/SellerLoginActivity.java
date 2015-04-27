@@ -44,7 +44,7 @@ public class SellerLoginActivity extends Activity {
 		String outletId = settings.getString("outletId", null);
 		if(outletId != null){
 			//if logged in, directly start main activity.
-			startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+			startActivity(new Intent(getApplicationContext(), ControllerActivity.class));
 			finish();
 		}
 		else{

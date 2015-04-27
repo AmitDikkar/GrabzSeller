@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/grabz_background"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btnManageAisleItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:onClick="manageAisleItems"
+        android:text="Manage Aisle Items" />
+
+    <Button
+        android:id="@+id/btnAisleManagement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:onClick="btnAisleManagement"
+        android:text="Manage Aisles" />
+
+    <Button
+        android:id="@+id/btnPromotions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:onClick="btnPromotions"
+        android:text="Promotions" />
+    
+</LinearLayout>

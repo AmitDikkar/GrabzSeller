@@ -7,5 +7,6 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_seller_login">SellerLoginActivity</string>
     <string name="hint_enter_outlet_id">Enter Outlet Id...</string>
+    <string name="manage_aisles_aisle_number_missing_message">Opps.. you forgot to enter Aisle number</string>
 
 </resources>
