@@ -49,7 +49,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	
 	ListView listViewAisleItems;
 	public static List<AisleItemDto> aisleItemDtos = new ArrayList<AisleItemDto>();
-	AisleItemsAdapter aisleItemsAdapter;
+	public static AisleItemsAdapter aisleItemsAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 
 	private void populateSpinner() {
 		GetAisleItemsTask task = new GetAisleItemsTask(this);
-		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/", this.outletId);
+		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/names", this.outletId);
 		task.execute(url);
 	}
 

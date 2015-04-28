@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
+ * This adapter is for the list view present on AndroidBarcodeQrExample.
  * @author Amit
  *
  */

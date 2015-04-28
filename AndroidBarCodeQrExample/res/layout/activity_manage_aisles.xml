@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/manageAisle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/grabz_background"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,6 +19,8 @@
             android:layout_gravity="center|top"
             android:layout_margin="5dp"
             android:layout_weight="1"
+            android:focusable="true"
+			android:focusableInTouchMode="true"
             android:text="Start managing aisles"
             android:textColor="#FFFFFF"
             android:textSize="15dp" />
@@ -23,15 +28,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content" >
 
         <EditText
             android:id="@+id/idEditTextAddAisle"
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_horizontal"
-            android:layout_weight="1"
-            android:ellipsize="end"
             android:gravity="left|center_horizontal"
             android:hint="@string/hint_enter_outlet_id"
             android:singleLine="true"
@@ -47,8 +51,16 @@
             android:text="Add Aisle" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/manageAislesHeader"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#336699"
+        android:gravity="center_vertical"
+        android:padding="10dp" />
+
     <ListView
-        android:id="@+id/idListViewAislesOnManageAisles"
+        android:id="@+id/idListViewManageAisles"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
