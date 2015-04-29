@@ -1,13 +1,15 @@
 /**
  * 
  */
-package com.javacodegeeks.androidqrcodeexample;
+package com.javacodegeeks.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.javacodegeeks.androidqrcodeexample.AndroidBarcodeQrExample;
+import com.javacodegeeks.androidqrcodeexample.R;
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleItemDeleteClickListener;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.LinkDto;

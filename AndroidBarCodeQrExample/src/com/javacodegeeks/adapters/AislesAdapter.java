@@ -1,10 +1,11 @@
 /**
  * 
  */
-package com.javacodegeeks.androidqrcodeexample;
+package com.javacodegeeks.adapters;
 
 import java.util.List;
 
+import com.javacodegeeks.androidqrcodeexample.R;
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleDeleteClickListener;
 import com.javacodegeeks.pojo.AisleNameDto;
 import com.javacodegeeks.pojo.LinkDto;

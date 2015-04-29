@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.print.attribute.standard.MediaSize.Other;
+
 import org.ietf.jgss.Oid;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,8 +26,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.javacodegeeks.pojo.AisleItem;
+import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.AisleNameDto;
 import com.javacodegeeks.pojo.LayoutDto;
+import com.javacodegeeks.pojo.LayoutUpdateActions;
+import com.javacodegeeks.pojo.LayoutUpdateRequest;
 import com.javacodegeeks.pojo.LinkDto;
 import com.javacodegeeks.pojo.LinksDto;
 
@@ -51,13 +56,24 @@ public class RestManager {
 	}
 	
 	public String[] getAisleNames(String outletId){
-		//RestManager manager = new RestManager();
-		HttpEntity<?> requestEntity = getRequestEntity();
-		RestTemplate restTemplate = getRestTemplate();
-		String url = String.format("%s/seller/outlets/%s/aisles/", BASE_URL ,outletId);
-		ResponseEntity<String[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,String[].class);
-		String[] aisleNames = responseEntity.getBody();
-		return aisleNames;
+		String[] aisleNames = null;
+		try{
+			//RestManager manager = new RestManager();
+			HttpEntity<?> requestEntity = getRequestEntity();
+			RestTemplate restTemplate = getRestTemplate();
+			String url = String.format("%s/seller/outlets/%s/aisles/names", BASE_URL ,outletId);
+			ResponseEntity<String[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity,String[].class);
+			aisleNames = responseEntity.getBody();
+			return aisleNames;
+		}
+		catch (HttpClientErrorException e){
+			Log.i("Get-AisleNames", "Failed to get aisle names: " + e.getStatusText());
+			return aisleNames;
+		}
+		catch (Exception e) {
+			Log.i("Get-AisleNames", "Failed to get aisle names: " + e.getLocalizedMessage());
+			return aisleNames;
+		}
 	}
 
 	public AisleNameDto[] getAisles(String outletId) {
@@ -125,6 +141,62 @@ public class RestManager {
 		catch(HttpClientErrorException e){
 			Log.i("Delete-Aisle Task:", e.getStatusText());
 			return e.getStatusCode();
+		}
+	}
+
+	public AisleItemDto[] getPromotionalItems(String outletId, String aisleName) {
+		AisleItemDto[] aisleItems = null;
+		String url = String.format("%s/seller/outlets/%s/aisles/%s/promotions", BASE_URL, outletId, aisleName);
+		
+		try{
+			RestManager manager = new RestManager();
+			HttpEntity<?> requestEntity = manager.getRequestEntity();
+			RestTemplate restTemplate = manager.getRestTemplate();
+		
+			ResponseEntity<AisleItemDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, AisleItemDto[].class);
+			aisleItems = responseEntity.getBody();
+			return aisleItems;
+		}
+		catch(HttpClientErrorException e){
+			Log.i("Delete-Aisle Task:", e.getStatusText());
+			return aisleItems;
+		}
+		catch (Exception e) {
+			Log.e("GET-promotional Items", e.getLocalizedMessage());
+			return aisleItems;
+		}
+	}
+
+	public AisleItemDto promotion(String url, boolean shouldSetPromotion, double promotionalPrice, String promotionName) {
+		try{
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setContentType(new MediaType("application","json"));
+			RestTemplate restTemplate = new RestTemplate();
+			MappingJacksonHttpMessageConverter mapper = new MappingJacksonHttpMessageConverter();
+			restTemplate.getMessageConverters().add(mapper);
+			restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+			LayoutUpdateRequest updateRequest = new LayoutUpdateRequest();
+			if(!shouldSetPromotion){
+				updateRequest.setAction(LayoutUpdateActions.REMOVE_PROMOTION);
+			}
+			else{
+				updateRequest.setAction(LayoutUpdateActions.SET_PROMOTION);
+				updateRequest.setPromotionalPrice(promotionalPrice);
+				updateRequest.setPromotionName(promotionName);
+			}
+			String fullUrl = BASE_URL + url;
+			HttpEntity<LayoutUpdateRequest> requestEntity = new HttpEntity<LayoutUpdateRequest>(updateRequest,requestHeaders);
+			ResponseEntity<AisleItemDto> responseEntity = restTemplate.exchange(fullUrl, HttpMethod.PUT, requestEntity,AisleItemDto.class);
+			AisleItemDto aisleItemDto = responseEntity.getBody();
+			return aisleItemDto;
+		}
+		catch(HttpClientErrorException e){
+			Log.e("Promotion", "ShouldSetPromotion: " + shouldSetPromotion + " Error: " + e.getStatusText());
+			return null;
+		}
+		catch (Exception e) {
+			Log.e("Promotion", "ShouldSetPromotion: " + shouldSetPromotion + " Error: " + e.getLocalizedMessage());
+			return null;
 		}
 	}
 }

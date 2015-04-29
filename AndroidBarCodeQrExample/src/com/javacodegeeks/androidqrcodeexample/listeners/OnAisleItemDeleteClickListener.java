@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import com.javacodegeeks.androidqrcodeexample.AisleItemsAdapter;
+import com.javacodegeeks.adapters.AisleItemsAdapter;
 import com.javacodegeeks.androidqrcodeexample.AndroidBarcodeQrExample;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.DeleteAisleItemResponse;

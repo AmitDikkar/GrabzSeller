@@ -8,6 +8,8 @@ import java.util.List;
 
 
 
+
+import com.javacodegeeks.adapters.AislesAdapter;
 import com.javacodegeeks.pojo.AisleNameDto;
 import com.javacodegeeks.rest.RestManager;
 
@@ -35,7 +37,6 @@ public class ManageAisles extends Activity {
 	public static List<AisleNameDto> aisleNameDtos = new ArrayList<AisleNameDto>();
 	final String PREFS_NAME = "MyPrefsFile";
 	public static AislesAdapter aislesAdapter;
-	AisleItemsAdapter aisleItemsAdapter;
 	
 	String outletId;
 	

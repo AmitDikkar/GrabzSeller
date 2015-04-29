@@ -5,8 +5,6 @@ package com.javacodegeeks.androidqrcodeexample.listeners;
 
 import org.springframework.http.HttpStatus;
 
-import com.javacodegeeks.androidqrcodeexample.AisleItemsAdapter;
-import com.javacodegeeks.androidqrcodeexample.AislesAdapter;
 import com.javacodegeeks.androidqrcodeexample.ManageAisles;
 import com.javacodegeeks.pojo.AisleNameDto;
 import com.javacodegeeks.pojo.DeleteAisleItemResponse;

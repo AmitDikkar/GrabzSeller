@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
 
+import com.javacodegeeks.adapters.AisleItemsAdapter;
 import com.javacodegeeks.pojo.AisleItem;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.ItemDto;
@@ -77,7 +78,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	}
 
 	private void populateSpinner() {
-		GetAisleItemsTask task = new GetAisleItemsTask(this);
+		GetAisleNamesTask task = new GetAisleNamesTask(this);
 		String url = String.format("http://grabztestenv.elasticbeanstalk.com/seller/outlets/%s/aisles/names", this.outletId);
 		task.execute(url);
 	}
@@ -232,11 +233,11 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	 * @author Amit
 	 *
 	 */
-	public class GetAisleItemsTask extends AsyncTask<String, Void, String[]>{
+	public class GetAisleNamesTask extends AsyncTask<String, Void, String[]>{
 
 		HttpStatus responseCode;
 		Context appContext;
-		public GetAisleItemsTask(Context appContext){
+		public GetAisleNamesTask(Context appContext){
 			this.appContext = appContext;
 		}
 		

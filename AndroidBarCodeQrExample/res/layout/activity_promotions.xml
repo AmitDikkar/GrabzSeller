@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/grabz_background"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/textView_promotions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Select Aisle and add items on promotions."
+        android:textColor="#FFFFFF"
+        android:textSize="15dp" />
+
+    <Spinner
+        android:id="@+id/spinner_promotions_aisleNames"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:background="#90150517"
+        android:gravity="center" />
+     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btn_manage_aisles_QRScanner"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="scanQR"
+            android:text="QR Code"
+            android:textSize="18dp" >
+        </Button>
+
+        <Button
+            android:id="@+id/btn_manage_aisles_BarcodeScanner"
+            android:layout_height="70dp"
+            android:layout_width="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="scanBar"
+            android:text="Bar Code"
+            android:textSize="18dp" >
+        </Button>
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/promotionsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#336699"
+        android:gravity="center_vertical"
+        android:padding="10dp" />
+
+     <ListView
+        android:id="@+id/idListViewPromotions"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+</LinearLayout>
