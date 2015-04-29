@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.javacodegeeks.pojo.AisleItem;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.AisleNameDto;
+import com.javacodegeeks.pojo.DeleteAisleItemResponse;
 import com.javacodegeeks.pojo.LayoutDto;
 import com.javacodegeeks.pojo.LayoutUpdateActions;
 import com.javacodegeeks.pojo.LayoutUpdateRequest;
@@ -182,9 +183,10 @@ public class RestManager {
 			else{
 				updateRequest.setAction(LayoutUpdateActions.SET_PROMOTION);
 				updateRequest.setPromotionalPrice(promotionalPrice);
-				updateRequest.setPromotionName(promotionName);
+				updateRequest.setPromotionName("NO_NAME");
 			}
 			String fullUrl = BASE_URL + url;
+			Log.i("Promotion", "sending PUT on : " + fullUrl);
 			HttpEntity<LayoutUpdateRequest> requestEntity = new HttpEntity<LayoutUpdateRequest>(updateRequest,requestHeaders);
 			ResponseEntity<AisleItemDto> responseEntity = restTemplate.exchange(fullUrl, HttpMethod.PUT, requestEntity,AisleItemDto.class);
 			AisleItemDto aisleItemDto = responseEntity.getBody();
@@ -196,6 +198,28 @@ public class RestManager {
 		}
 		catch (Exception e) {
 			Log.e("Promotion", "ShouldSetPromotion: " + shouldSetPromotion + " Error: " + e.getLocalizedMessage());
+			return null;
+		}
+	}
+
+	public DeleteAisleItemResponse deleteAisleItem(String url) {
+
+		try{
+			url = BASE_URL + url;
+			HttpEntity<?> requestEntity = getRequestEntity();
+			RestTemplate restTemplate = getRestTemplate();
+
+			Log.i("DELETE_Aisle_item: Put request on:", url);
+			ResponseEntity<DeleteAisleItemResponse> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, DeleteAisleItemResponse.class);
+			DeleteAisleItemResponse response = responseEntity.getBody();
+			return response;
+		}
+		catch(HttpClientErrorException e){
+			Log.e("DELETE Aisle Item", "Error: " + e.getStatusText());
+			return null;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

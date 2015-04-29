@@ -35,7 +35,6 @@ public class OnAisleSelectedOnPromotions implements OnItemSelectedListener {
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		String aisleName = parent.getItemAtPosition(position).toString();
-		Toast.makeText(context, "Aisle selected : " + aisleName, Toast.LENGTH_SHORT).show();
 		GetPromotionalItemsTask task = new GetPromotionalItemsTask();
 		task.execute(aisleName);
 	}
@@ -61,7 +60,6 @@ public class OnAisleSelectedOnPromotions implements OnItemSelectedListener {
 		@Override
 		protected void onPostExecute(AisleItemDto[] aisleItemDtos) {
 			if(aisleItemDtos != null){
-				Toast.makeText(context, "# promotional items:" + aisleItemDtos.length, Toast.LENGTH_SHORT).show();
 				adapter.clear();
 				adapter.addAll(aisleItemDtos);
 				adapter.notifyDataSetChanged();
