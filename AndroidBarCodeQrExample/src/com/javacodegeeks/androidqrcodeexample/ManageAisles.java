@@ -45,6 +45,7 @@ public class ManageAisles extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_manage_aisles);
+	    setTitle("Manage Aisles");
 	    
 	    this.editTextAddAisle = (EditText) findViewById(R.id.idEditTextAddAisle);
 	 

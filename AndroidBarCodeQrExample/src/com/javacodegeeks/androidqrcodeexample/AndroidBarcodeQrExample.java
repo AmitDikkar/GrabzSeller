@@ -105,7 +105,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		}
 	}
 	
-	//on click listener for logout.
+/*	//on click listener for logout.
 	public void logout(View v){
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
@@ -113,7 +113,7 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		// Commit the edits!
 		editor.commit();
 		finish();
-	}
+	}*/
 
 	private static AlertDialog showDialog(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo) {
 		AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);

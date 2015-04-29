@@ -124,7 +124,7 @@ public class SellerLoginActivity extends Activity {
 				editor.commit();
 				
 				//start our next activity
-				startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+				startActivity(new Intent(getApplicationContext(), ControllerActivity.class));
 				
 				//kill login activity, so that user will not be able to go back to this activity 
 				//by pressing back button

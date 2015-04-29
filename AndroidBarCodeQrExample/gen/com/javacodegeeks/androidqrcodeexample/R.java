@@ -34,13 +34,13 @@ public final class R {
         public static final int addAisle=0x7f07000c;
         public static final int btnAisleManagement=0x7f070001;
         public static final int btnDeleteAisleItem=0x7f070019;
-        public static final int btnLogout=0x7f070005;
+        public static final int btnLogout=0x7f070003;
         public static final int btnManageAisleItems=0x7f070000;
         public static final int btnPromotions=0x7f070002;
         public static final int btn_manage_aisles_BarcodeScanner=0x7f070012;
         public static final int btn_manage_aisles_QRScanner=0x7f070011;
         public static final int button=0x7f070016;
-        public static final int container=0x7f070003;
+        public static final int container=0x7f070004;
         public static final int idEditTextAddAisle=0x7f07000b;
         public static final int idEditTextOutletId=0x7f070015;
         public static final int idListViewAisleItems=0x7f070009;
@@ -53,7 +53,7 @@ public final class R {
         public static final int scanner2=0x7f070008;
         public static final int spinner_aisleNames=0x7f070006;
         public static final int spinner_promotions_aisleNames=0x7f070010;
-        public static final int textView1=0x7f070004;
+        public static final int textView1=0x7f070005;
         public static final int textView_promotions=0x7f07000f;
         public static final int txtHeader=0x7f070017;
         public static final int txtTitle=0x7f070018;

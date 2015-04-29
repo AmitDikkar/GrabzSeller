@@ -22,14 +22,14 @@
             android:textColor="#FFFFFF"
             android:textSize="15dp" 
             android:layout_weight="1"/>
-        <ImageButton
+<!--         <ImageButton
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="12"
             android:onClick="logout"
             android:contentDescription="logout User"
-            android:src="@drawable/ic_action_1429593462_logout" />
+            android:src="@drawable/ic_action_1429593462_logout" /> -->
         
     </LinearLayout>
 
