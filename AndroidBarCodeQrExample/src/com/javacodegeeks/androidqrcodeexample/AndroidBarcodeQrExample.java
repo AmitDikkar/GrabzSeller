@@ -55,7 +55,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		getActionBar().setDisplayShowHomeEnabled(true);
+		setTitle("Item Scanner");
 		setContentView(R.layout.activity_main);
 		this.spinner = (Spinner) findViewById(R.id.spinner_aisleNames);
 		this.spinner.setOnItemSelectedListener(this);
@@ -69,8 +70,8 @@ public class AndroidBarcodeQrExample extends Activity implements OnItemSelectedL
 		
 		//Create the list view to display items of the aisle.
 		this.listViewAisleItems = (ListView)findViewById(R.id.idListViewAisleItems);
-		View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
-        this.listViewAisleItems.addHeaderView(header);
+//		View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
+//        this.listViewAisleItems.addHeaderView(header);
         				
         //setting List view adapter for Aisle items list.
 		this.aisleItemsAdapter = new AisleItemsAdapter(this, R.layout.listview_item_row, aisleItemDtos);

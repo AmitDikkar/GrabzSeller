@@ -6,7 +6,6 @@ package com.javacodegeeks.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 
 import com.javacodegeeks.androidqrcodeexample.AndroidBarcodeQrExample;
 import com.javacodegeeks.androidqrcodeexample.R;

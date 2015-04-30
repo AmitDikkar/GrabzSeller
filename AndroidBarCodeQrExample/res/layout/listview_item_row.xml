@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="10dp" >
+    android:padding="10dp" 
+    android:background="@drawable/dark_background">
 
     <TextView
         android:id="@+id/txtTitle"
@@ -18,11 +19,12 @@
     
     <ImageButton 
         android:id="@+id/btnDeleteAisleItem"
-        android:src="@drawable/blue_delete"
+        android:src="@android:drawable/ic_menu_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="5"
         android:contentDescription="Deletes the aisle item"
+        android:background="@null"
         />
     
 </LinearLayout>

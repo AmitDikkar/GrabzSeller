@@ -5,7 +5,6 @@ package com.javacodegeeks.rest;
 
 import java.io.IOException;
 
-import org.apache.zookeeper.common.IOUtils;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.ResponseErrorHandler;

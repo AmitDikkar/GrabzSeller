@@ -4,72 +4,81 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/grabz_background"
+    android:background="@drawable/background_frame"
     android:orientation="vertical"
     tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
-    
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|top"
-            android:layout_margin="5dp"
-            android:text="Select Aisle and start scanning items."
-            android:textColor="#FFFFFF"
-            android:textSize="15dp" 
-            android:layout_weight="1"/>
-<!--         <ImageButton
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="12"
-            android:onClick="logout"
-            android:contentDescription="logout User"
-            android:src="@drawable/ic_action_1429593462_logout" /> -->
-        
-    </LinearLayout>
-
-    <Spinner
-        android:id="@+id/spinner_aisleNames"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:background="#90150517"
-        android:gravity="center" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/scanner"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="scanQR"
-            android:text="QR Code"
-            android:textSize="18dp" >
-        </Button>
-
-        <Button
-            android:id="@+id/scanner2"
-            android:layout_height="70dp"
-            android:layout_width="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:onClick="scanBar"
-            android:text="Bar Code"
-            android:textSize="18dp" >
-        </Button>
-    </LinearLayout>
-    
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#B3990000" >
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	
+	        <TextView
+	            android:id="@+id/textView1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:layout_margin="5dp"
+	            android:text="Select Aisle and start scanning items"
+	            android:textColor="#FFFFFF"
+	            android:textSize="15dp" 
+	            android:layout_weight="5"/>
+	<!--         <ImageButton
+	            android:id="@+id/btnLogout"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="12"
+	            android:onClick="logout"
+	            android:contentDescription="logout User"
+	            android:src="@drawable/ic_action_1429593462_logout" /> -->
+		        <Spinner
+			        android:id="@+id/spinner_aisleNames"
+			        android:layout_width="wrap_content"
+			        android:layout_height="50dp"
+			        android:layout_gravity="center"
+			        android:layout_marginLeft="10dp"
+			        android:gravity="center"
+			        android:layout_weight="1"
+			        android:spinnerMode="dialog" />
+	    </LinearLayout>
+	
+	    
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	
+	        <Button
+	            android:id="@+id/scanner"
+	            android:layout_width="0dp"
+	            android:layout_height="70dp"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:onClick="scanQR"
+	            android:text="QR Code"
+	            android:textSize="18dp" >
+	        </Button>
+	
+	        <Button
+	            android:id="@+id/scanner2"
+	            android:layout_height="70dp"
+	            android:layout_width="0dp"
+	            android:layout_gravity="center"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:onClick="scanBar"
+	            android:text="Bar Code"
+	            android:textSize="18dp" >
+	        </Button>
+	    </LinearLayout>
+   	</LinearLayout>
+   	<View android:layout_height="15px"
+    android:layout_width="fill_parent"
+    android:background="#008ee0"/>
     <ListView
         android:id="@+id/idListViewAisleItems"
         android:layout_width="fill_parent"

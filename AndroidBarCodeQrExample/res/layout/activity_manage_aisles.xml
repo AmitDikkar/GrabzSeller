@@ -4,7 +4,7 @@
     android:id="@+id/manageAisle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/grabz_background"
+    android:background="@drawable/background_frame"
     android:orientation="vertical"
     tools:context="com.javacodegeeks.androidstartactivityforresultexample.ActivityOne" >
 
