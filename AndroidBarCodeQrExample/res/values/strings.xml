@@ -9,5 +9,6 @@
     <string name="controller_activity">ControllerActivity</string>
     <string name="hint_enter_outlet_id">Enter Outlet Id...</string>
     <string name="manage_aisles_aisle_number_missing_message">Opps.. you forgot to enter Aisle number</string>
+    <string name="title_activity_add_items">AddItems</string>
 
 </resources>

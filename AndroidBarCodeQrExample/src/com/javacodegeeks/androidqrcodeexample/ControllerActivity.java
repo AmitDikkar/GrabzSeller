@@ -28,7 +28,8 @@ public class ControllerActivity extends Activity {
 
 	//on click listener for Manage Aisle Items button.
 	public void manageAisleItems(View v){
-		startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+//		startActivity(new Intent(getApplicationContext(), AndroidBarcodeQrExample.class));
+		startActivity(new Intent(getApplicationContext(), AddItems.class));
 	}
 	
 	//on click listener for Aisle Management

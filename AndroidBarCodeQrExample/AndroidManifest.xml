@@ -17,11 +17,14 @@
         <activity
             android:name=".AndroidBarcodeQrExample"
             android:label="@string/app_name" >
-<!--             <intent-filter>
+
+            <!--
+                 <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
         <activity
             android:name=".SellerLoginActivity"
@@ -32,12 +35,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ControllerActivity"
-            android:label="@string/controller_activity">
-            
+        <activity
+            android:name=".ControllerActivity"
+            android:label="@string/controller_activity" >
         </activity>
-        <activity android:name="ManageAisles"></activity>
-        <activity android:name="Promotions"></activity>
+        <activity android:name=".ManageAisles" >
+        </activity>
+        <activity android:name=".Promotions" >
+        </activity>
+        <activity
+            android:name=".AddItems"
+            android:label="@string/title_activity_add_items" >
+        </activity>
     </application>
 
 </manifest>
