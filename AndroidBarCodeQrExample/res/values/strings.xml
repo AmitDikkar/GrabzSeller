@@ -10,5 +10,8 @@
     <string name="hint_enter_outlet_id">Enter Outlet Id...</string>
     <string name="manage_aisles_aisle_number_missing_message">Opps.. you forgot to enter Aisle number</string>
     <string name="title_activity_add_items">AddItems</string>
-
+    <string name="manage_ailse_menu">Manage Aisles</string>
+    <string name="logout_menu">Logout</string>
+    <string name="scan_qr_menu">Scan QR Code</string>
+	
 </resources>

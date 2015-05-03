@@ -44,7 +44,7 @@ public class SellerLoginActivity extends Activity {
 		String outletId = settings.getString("outletId", null);
 		if(outletId != null){
 			//if logged in, directly start main activity.
-			startActivity(new Intent(getApplicationContext(), ControllerActivity.class));
+			startActivity(new Intent(getApplicationContext(), AddItems.class));
 			finish();
 		}
 		else{
@@ -124,7 +124,7 @@ public class SellerLoginActivity extends Activity {
 				editor.commit();
 				
 				//start our next activity
-				startActivity(new Intent(getApplicationContext(), ControllerActivity.class));
+				startActivity(new Intent(getApplicationContext(), AddItems.class));
 				
 				//kill login activity, so that user will not be able to go back to this activity 
 				//by pressing back button

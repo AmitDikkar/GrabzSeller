@@ -48,7 +48,7 @@ public class ManageAisles extends Activity {
 	    setTitle("Manage Aisles");
 	    
 	    this.editTextAddAisle = (EditText) findViewById(R.id.idEditTextAddAisle);
-	 
+	    
 	    //retrieve outletId from the shared preferences.
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
         this.outletId = settings.getString("outletId", null);

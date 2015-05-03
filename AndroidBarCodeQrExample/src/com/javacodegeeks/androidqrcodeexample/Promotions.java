@@ -172,7 +172,7 @@ public class Promotions extends Activity {
 		
 		//attach onClick listener to OK button
 		Button okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-		okButton.setOnClickListener(new PromotionDialogPositiveBtnListner(alertDialog, this, aisleItemDto));
+//		okButton.setOnClickListener(new PromotionDialogPositiveBtnListner(alertDialog, this, aisleItemDto));
 		
 		//attach onClick listener to Cancel button
 		Button cancelButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);

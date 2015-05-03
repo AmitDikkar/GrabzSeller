@@ -2,6 +2,7 @@ package com.javacodegeeks.androidqrcodeexample;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -9,17 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-
-
-
-
-
-
-
-
-
-
+//import com.javacodegeeks.androidqrcodeexample.Promotions.PostScannedPtomotionalItemTask;
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleItemDeleteClickListener;
+import com.javacodegeeks.androidqrcodeexample.listeners.PromotionDialogNegativeBtnListner;
+import com.javacodegeeks.androidqrcodeexample.listeners.PromotionDialogPositiveBtnListner;
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleItemDeleteClickListener.DeleteAisleItemTask;
 import com.javacodegeeks.pojo.AisleItemDto;
 import com.javacodegeeks.pojo.DeleteAisleItemResponse;
@@ -33,10 +27,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +43,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -58,10 +61,11 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 	private static final String PREFS_NAME = "MyPrefsFile";
 	private static Context parentCtx;
 	Spinner spinner;
-	
+	private boolean promo;
+	public static String selectedAisleItem;
 	ListView listViewAisleItems;
-	private static List<AisleItemDto> aisleItemDtos = new ArrayList<AisleItemDto>();
-	private static AisleAdapter aisleItemsAdapter;
+	public static List<AisleItemDto> aisleItemDtos = new ArrayList<AisleItemDto>();
+	public static AisleAdapter aisleItemsAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +85,25 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		this.aisleItemsAdapter = new AisleAdapter(this, aisleItemDtos);
         this.listViewAisleItems.setAdapter(aisleItemsAdapter);
         
-		
+        CheckBox promoCB = (CheckBox) findViewById(R.id.pormoCB);
+        promo = promoCB.isChecked();
+        promoCB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        	Button scanBtn = (Button) findViewById(R.id.scanner2New);
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+            	promo = isChecked;
+            	if (promo){
+            		(new GetPromotionalItemsTask()).execute(selectedAisleItem);
+            		scanBtn.setText("Scan Promotional Item");
+            	}
+            	else{
+            		GetItemsTask task = new GetItemsTask(parentCtx);
+            		task.execute(outletId, selectedAisleItem);
+            		scanBtn.setText("Scan Item");
+            	}
+            }
+        });
+
 }
 
 	private void populateSpinner() {
@@ -101,7 +123,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 	}
 
 	//on click listener for QR code scanning.
-	public void scanQR(View v) {
+	public void scanQR() {
 		try {
 			Intent intent = new Intent(ACTION_SCAN);
 			intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
@@ -141,13 +163,9 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 			if (resultCode == RESULT_OK) {
 				String upcCode = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-				
 				String selectedAisle = String.valueOf(this.spinner.getSelectedItem());
 				String outletId = this.outletId;
-				
-				//post this item to backend.
-				PostScannedItemTask task = new PostScannedItemTask(this);
-				task.execute(outletId, selectedAisle, upcCode);
+				showPromotionsFormDialog(this, upcCode, selectedAisle, outletId, promo);
 			}
 		}
 	}
@@ -166,10 +184,25 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		switch(id){
+		case R.id.logout:
+			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putString("outletId", null);
+			// Commit the edits!
+			editor.commit();
+			finish();
 			return true;
+		case R.id.manage_ailse:
+			startActivity(new Intent(getApplicationContext(), ManageAisles.class));
+			return true;
+		case R.id.scan_qr:
+			scanQR();
+			return true;
+		default: 
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
+		
 	}
 
 	@Override
@@ -181,12 +214,17 @@ public class AddItems extends Activity implements OnItemSelectedListener{
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position,
             long id) {
-        String selectedAisleItem = parent.getItemAtPosition(position).toString();
+        selectedAisleItem = parent.getItemAtPosition(position).toString();
         displayAisleItems(selectedAisleItem);
     }
     private void displayAisleItems(String selectedAisleItem) {
-		GetItemsTask task = new GetItemsTask(this, this.listViewAisleItems);
-		task.execute(this.outletId, selectedAisleItem);
+    	if (promo){
+    		(new GetPromotionalItemsTask()).execute(selectedAisleItem);
+    	}
+    	else{
+    		GetItemsTask task = new GetItemsTask(this);
+    		task.execute(this.outletId, selectedAisleItem);
+    	}
 	}
 
     /**
@@ -194,60 +232,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 	 * @author Amit
 	 *
 	 */
-	public class PostScannedItemTask extends AsyncTask<String, Void, AisleItemDto>{
 
-		HttpStatus responseCode;
-		Context appContext;
-		
-		public PostScannedItemTask(Context appContext) {
-			this.appContext = appContext;
-		}
-
-		@Override
-		protected AisleItemDto doInBackground(String... params) {
-			String outletId = params[0];
-			String selectedAisle = params[1];
-			String upcCode = params[2];
-			String url = "http://grabztestenv.elasticbeanstalk.com//seller/outlets/"+outletId+"/aisles/"+ selectedAisle+"/items/"+upcCode;
-			Log.i("PostScannedItemTask - doInBackground", "url received: " + url);
-			AisleItemDto aisleItemDto = sendPostRequest(url);
-			return aisleItemDto;
-		}
-
-		@Override
-		protected void onPostExecute(AisleItemDto aisleItemDto) {
-			if(aisleItemDto == null){
-				Toast toast = Toast.makeText(this.appContext, "Sorry, we couldn't find this item in our database. Please contact Team Grabz.", Toast.LENGTH_LONG);
-				toast.show();
-				return;
-			}
-			else{
-				Toast toast = Toast.makeText(this.appContext, "Item \"" + aisleItemDto.getAisleItem().getName() + "\" has been added.", Toast.LENGTH_LONG);
-				toast.show();
-				aisleItemDtos.add(aisleItemDto);
-				aisleItemsAdapter.notifyDataSetChanged();
-			}
-	     }
-		
-		private AisleItemDto sendPostRequest(String url) {
-			try{
-				RestManager manager = new RestManager();
-				HttpEntity<?> requestEntity = manager.getRequestEntity();
-				RestTemplate restTemplate = manager.getRestTemplate();
-				
-				ResponseEntity<AisleItemDto> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AisleItemDto.class);
-				Log.i("Status Code", "Status code" + responseEntity.getStatusCode());
-				AisleItemDto aisleItemDto = responseEntity.getBody();
-				responseCode = responseEntity.getStatusCode();
-				Log.i("PostScannedItemTask - sendPostRequest", "Request Executed with status code : " + responseCode + " and item received is:" + aisleItemDto.getAisleItem().getName());
-				return aisleItemDto;
-			}
-			catch(Exception e){
-				return null;
-			}
-		}
-	}
-	
 	/**
 	 * To send GET request for AisleNames.
 	 * @author Amit
@@ -302,9 +287,9 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		private HttpStatus responseCode;
 		ListView listViewAisleItems;
 		
-		public GetItemsTask(Context appContext, ListView listViewAisleItems){
+		public GetItemsTask(Context appContext){
 			this.appContext = appContext;
-			this.listViewAisleItems = listViewAisleItems;
+//			this.listViewAisleItems = listViewAisleItems;
 		}
 		
 		@Override
@@ -341,7 +326,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 				aisleItemsAdapter.clear();
 				aisleItemsAdapter.addAll(aisleItemDtos);
 				aisleItemsAdapter.notifyDataSetChanged();
-		        Log.i("CUSTOM_LIST_VIEW", "Items after populating: " + this.listViewAisleItems.getAdapter().getCount());
+//		        Log.i("CUSTOM_LIST_VIEW", "Items after populating: " + this.listViewAisleItems.getAdapter().getCount());
 			}
 		}
 	}
@@ -358,6 +343,8 @@ public class AddItems extends Activity implements OnItemSelectedListener{
             final AisleItemDto aisleItemDto = aisleItemDtos.get(position);
             TextView tv = (TextView) v.findViewById(R.id.txtTitle);
             tv.setText(aisleItemDto.getAisleItem().getName());
+            if (aisleItemDto.getAisleItem().getOnPromotion())
+            	tv.setTextColor(Color.RED);
             ImageButton btn = (ImageButton) v.findViewById(R.id.btnDeleteAisleItem);
             
             btn.setOnClickListener(new View.OnClickListener() {
@@ -418,4 +405,145 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		}
 	}
         
+	public void showPromotionsFormDialog(Context parentContext, String upcCode, String selectedAisle, String outletId, boolean onPromo){
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setTitle("Add To Promotion.");
+        b.setCancelable(false);
+        
+	/*	final TextView textView = new TextView(this);
+		String itemName = aisleItemDto.getAisleItem().getName();
+		textView.setText(itemName);
+		textView.setGravity(Gravity.CENTER_HORIZONTAL);*/
+		
+		final EditText price = new EditText(this);
+		price.setHint("Enter Regular Price...");
+		price.setId(1);
+		price.setInputType(InputType.TYPE_CLASS_NUMBER);
+		price.setGravity(Gravity.CENTER_HORIZONTAL);
+		price.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
+		
+		LinearLayout lay = new LinearLayout(this);
+        lay.setOrientation(LinearLayout.VERTICAL);
+        //lay.addView(textView);
+        lay.addView(price);
+        
+        double promoPriceOut = 0;
+		
+			final EditText promoPrice = new EditText(this);
+			promoPrice.setHint("Enter Promotion Price...");
+			promoPrice.setId(2);
+			promoPrice.setInputType(InputType.TYPE_CLASS_NUMBER);
+			promoPrice.setGravity(Gravity.CENTER_HORIZONTAL);
+			promoPrice.setKeyListener(DigitsKeyListener.getInstance("0123456789."));
+			
+			//lay.addView(promoPrice);
+		//	promoPriceOut = Double.valueOf(promoPrice.getText().toString()); 
+		
+			if(onPromo){
+				lay.addView(promoPrice);
+			}
+		
+		b.setView(lay);
+	/*	LinearLayout lay = new LinearLayout(this);
+        lay.setOrientation(LinearLayout.VERTICAL);
+        //lay.addView(textView);
+        lay.addView(price);
+        b.setView(lay);*/
+
+        b.setPositiveButton("OK", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton)
+			{
+			}
+		});
+        
+		b.setNegativeButton("CANCEL",  new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton)
+			{
+			}
+		});
+		
+		AlertDialog alertDialog = b.create();
+		alertDialog.show();
+		
+		//double regPrice = Double.valueOf(price.getText().toString());
+		
+		//attach onClick listener to OK button
+		Button okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+		okButton.setOnClickListener(new PromotionDialogPositiveBtnListner(alertDialog, this, upcCode, selectedAisle, outletId, onPromo));
+		
+		//attach onClick listener to Cancel button
+		Button cancelButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+		//cancelButton.setOnClickListener(new PromotionDialogNegativeBtnListner(alertDialog, this, aisleItemDto));
+	}
+	public class PostScannedPtomotionalItemTask extends AsyncTask<String, Void, AisleItemDto>{
+
+		Context appContext;
+		public PostScannedPtomotionalItemTask(Context context){
+			this.appContext = context;
+		}
+		@Override
+		protected AisleItemDto doInBackground(String... params) {
+			String outletId = params[0];
+			String selectedAisle = params[1];
+			String upcCode = params[2];
+			String url = "http://grabztestenv.elasticbeanstalk.com//seller/outlets/"+outletId+"/aisles/"+ selectedAisle+"/items/"+upcCode;
+			Log.i("PostScannedItemTask - doInBackground", "url received: " + url);
+			return sendPostRequest(url);
+		}
+		
+		@Override
+		protected void onPostExecute(AisleItemDto aisleItemDto) {
+			if(aisleItemDto == null){
+				Toast toast = Toast.makeText(this.appContext, "Sorry, we couldn't find this item in our database. Please contact Team Grabz.", Toast.LENGTH_LONG);
+				toast.show();
+				return;
+			}
+		}
+		
+		private AisleItemDto sendPostRequest(String url) {
+			try{
+				RestManager manager = new RestManager();
+				HttpEntity<?> requestEntity = manager.getRequestEntity();
+				RestTemplate restTemplate = manager.getRestTemplate();
+				
+				ResponseEntity<AisleItemDto> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AisleItemDto.class);
+				Log.i("Status Code", "Status code" + responseEntity.getStatusCode());
+				AisleItemDto aisleItemDto = responseEntity.getBody();
+				HttpStatus responseCode = responseEntity.getStatusCode();
+				Log.i("PostScannedItemTask - sendPostRequest", "Request Executed with status code : " + responseCode + " and item received is:" + aisleItemDto.getAisleItem().getName());
+				return aisleItemDto;
+			}
+			catch(Exception e){
+				return null;
+			}
+		}
+	}
+	
+	public class GetPromotionalItemsTask extends AsyncTask<String, Void, AisleItemDto[]>{
+
+		@Override
+		protected AisleItemDto[] doInBackground(String... params) {
+			String aisleName = params[0];
+			RestManager manager = new RestManager();
+			AisleItemDto[] aisleItemDtos = manager.getPromotionalItems(outletId, aisleName);
+			return aisleItemDtos;
+		}
+		
+		@Override
+		protected void onPostExecute(AisleItemDto[] aisleItemDtos) {
+			if(aisleItemDtos != null){
+				aisleItemsAdapter.clear();
+				aisleItemsAdapter.addAll(aisleItemDtos);
+				aisleItemsAdapter.notifyDataSetChanged();
+			}
+			else{
+				Toast.makeText(parentCtx, "Error while retriving promotional items.", Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+	}
 }
