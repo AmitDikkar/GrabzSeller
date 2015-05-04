@@ -105,7 +105,13 @@ public class AddItems extends Activity implements OnItemSelectedListener{
             	}
             }
         });
-
+        Button scanBtn = (Button) findViewById(R.id.scanner2New);
+        scanBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Do something in response to button click
+            	scanBar();
+            }
+        });
 }
 
 	private void populateSpinner() {
@@ -114,7 +120,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		task.execute(url);
 	}
 	//onClick listner for scan barcode.
-	public void scanBar(View v) {
+	public void scanBar() {
 		try {
 			Intent intent = new Intent(ACTION_SCAN);
 			intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
@@ -346,7 +352,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
             TextView tv = (TextView) v.findViewById(R.id.txtTitle);
             tv.setText(aisleItemDto.getAisleItem().getName());
             if (aisleItemDto.getAisleItem().getOnPromotion())
-            	tv.setTextColor(Color.RED);
+            	tv.setTextColor(Color.parseColor("#ffff6201"));
             ImageButton btn = (ImageButton) v.findViewById(R.id.btnDeleteAisleItem);
             
             btn.setOnClickListener(new View.OnClickListener() {
@@ -409,7 +415,10 @@ public class AddItems extends Activity implements OnItemSelectedListener{
         
 	public void showPromotionsFormDialog(Context parentContext, String upcCode, String selectedAisle, String outletId, boolean onPromo){
 		AlertDialog.Builder b = new AlertDialog.Builder(this);
-		b.setTitle("Add To Promotion.");
+		if(onPromo)
+			b.setTitle("Add Promotional Item");
+		else 
+			b.setTitle("Add Regular Item");
         b.setCancelable(false);
         
 	/*	final TextView textView = new TextView(this);
