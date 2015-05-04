@@ -7,6 +7,6 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="C:/Workspace/cmpe295/GrabzSeller/AndroidBarCodeQrExample/libs/spring-core-3.2.5.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-core-3.2.5.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

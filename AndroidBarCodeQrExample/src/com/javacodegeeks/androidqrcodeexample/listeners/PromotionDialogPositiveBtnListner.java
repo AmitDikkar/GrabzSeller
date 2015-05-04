@@ -15,6 +15,7 @@ import com.javacodegeeks.pojo.LinkDto;
 import com.javacodegeeks.rest.RestManager;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -69,11 +70,22 @@ public class PromotionDialogPositiveBtnListner implements OnClickListener {
 
 		HttpStatus responseCode;
 		Context appContext;
+		private ProgressDialog dialogProgress;
 		
-	/*	public PostScannedItemTask(Context appContext) {
-			this.appContext = appContext;
-		}*/
+		public PostScannedItemTask() {
+			dialogProgress = new ProgressDialog(context);
+			dialogProgress.setMessage("Loading");
+			dialogProgress.setIndeterminate(true);
+			dialogProgress.setCancelable(false);
+		}
 
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			dialogProgress.show();
+		}
+		
 		@Override
 		protected AisleItemDto doInBackground(String... params) {
 		/*	String outletId = params[0];
@@ -99,6 +111,7 @@ public class PromotionDialogPositiveBtnListner implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(AisleItemDto aisleItemDto) {
+			dialogProgress.dismiss();
 			if(aisleItemDto == null){
 				Toast toast = Toast.makeText(context, "Sorry, we couldn't find this item in our database. Please contact Team Grabz.", Toast.LENGTH_LONG);
 				toast.show();

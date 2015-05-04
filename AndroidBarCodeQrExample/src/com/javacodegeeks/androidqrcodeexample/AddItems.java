@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+
 //import com.javacodegeeks.androidqrcodeexample.Promotions.PostScannedPtomotionalItemTask;
 import com.javacodegeeks.androidqrcodeexample.listeners.OnAisleItemDeleteClickListener;
 import com.javacodegeeks.androidqrcodeexample.listeners.PromotionDialogNegativeBtnListner;
@@ -22,6 +23,7 @@ import com.javacodegeeks.rest.RestManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -482,8 +484,18 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 	public class PostScannedPtomotionalItemTask extends AsyncTask<String, Void, AisleItemDto>{
 
 		Context appContext;
+		ProgressDialog dialog;
 		public PostScannedPtomotionalItemTask(Context context){
 			this.appContext = context;
+			dialog = new ProgressDialog(AddItems.this);
+	        dialog.setMessage("Loading");
+	        dialog.setIndeterminate(true);
+	        dialog.setCancelable(false);
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
 		}
 		@Override
 		protected AisleItemDto doInBackground(String... params) {
@@ -497,6 +509,7 @@ public class AddItems extends Activity implements OnItemSelectedListener{
 		
 		@Override
 		protected void onPostExecute(AisleItemDto aisleItemDto) {
+			dialog.dismiss();
 			if(aisleItemDto == null){
 				Toast toast = Toast.makeText(this.appContext, "Sorry, we couldn't find this item in our database. Please contact Team Grabz.", Toast.LENGTH_LONG);
 				toast.show();
